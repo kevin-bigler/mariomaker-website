@@ -4,11 +4,6 @@ RewriteCond %{REQUEST_FILENAME} !-d
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteRule . index.php [L]
 
-# Slim v2 docs version (routing):
-#RewriteEngine On
-#RewriteCond %{REQUEST_FILENAME} !-f
-#RewriteRule ^ index.php [QSA,L]
-
 # Basic Auth (password required)
 AuthName "Restricted Area"
 AuthType Basic

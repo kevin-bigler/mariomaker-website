@@ -1,0 +1,4 @@
+AuthName "Restricted Area"
+AuthType Basic
+AuthUserFile /home/mariomaker/public_html/.htpasswd
+require valid-user

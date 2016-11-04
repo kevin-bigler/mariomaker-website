@@ -1,3 +1,4 @@
 # composer libraries
 vendor/
 db_config.php
+logs/

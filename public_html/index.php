@@ -22,38 +22,70 @@ $config['db']['pass']   = $dbConfig['db']['pass'];
 $config['db']['dbname'] = $dbConfig['db']['dbname'];
 
 $app = new \Slim\App(["settings" => $config]);
-$app->get('/hello/{name}', function (Request $request, Response $response) {
-  $name = $request->getAttribute('name');
-  $response->getBody()->write("Hello, $name");
 
-  return $response;
-});
+$container = $app->getContainer();
 
-$app->get('/db-test', function(Request $request, Response $response) {
+$container['logger'] = function($c) {
+  $logger = new \Monolog\Logger('my_logger');
+  $fileHandler = new \Monolog\Handler\StreamHandler("../logs/app.log");
+  $logger->pushHandler($fileHandler);
+  return $logger;
+};
+
+$container['db'] = function($c) {
+  $db = $c['settings']['db'];
+
   // medoo library to access mysql
   // Initialize
   $database = new medoo([
     'database_type' => 'mysql',
-    'database_name' => $this->get('settings')['db']['dbname'],
-    'server' => $this->get('settings')['db']['host'],
-    'username' => $this->get('settings')['db']['user'],
-    'password' => $this->get('settings')['db']['pass'],
+    'database_name' => $db['dbname'],
+    'server' => $db['host'],
+    'username' => $db['user'],
+    'password' => $db['pass'],
     'charset' => 'utf8'
   ]);
 
-  $players = $database->select('player', '*');
+  return $database;
+};
 
-  echo 'players<pre>';
-  print_r($players);
-  die();
+$container['view'] = new \Slim\Views\PhpRenderer("./templates/");
 
-  // Enjoy
-  // $database->insert('account', [
-  //   'user_name' => 'foo',
-  //   'email' => 'foo@bar.com',
-  //   'age' => 25,
-  //   'lang' => ['en', 'fr', 'jp', 'cn']
-  // ]);
+$app->get('/hello/{name}', function (Request $request, Response $response) {
+  $name = $request->getAttribute('name');
+  $response->getBody()->write("Hello, $name");
+
+  $this->logger->addInfo("Something interesting happened");
+
+  return $response;
+});
+
+$app->get('/get-params-test', function (Request $request, Response $response) {
+  $data = $request->getQueryParams();
+  $levelData = [];
+  $levelData['level_id'] = filter_var($data['level_id'], FILTER_SANITIZE_STRING);
+
+  $response->getBody()->write('<pre>'.print_r($levelData, true));
+});
+
+$app->get('/scrape/level/{level_id}', function (Request $request, Response $response, $args) {
+  $levelId = $args['level_id'];
+
+  $response->getBody()->write('level id: ' . $levelId);
+});
+
+$app->get('/scrape/player/{player_id}', function (Request $request, Response $response, $args) {
+  $playerId = $args['player_id'];
+
+  $response->getBody()->write('player id: ' . $playerId);
+});
+
+$app->get('/db-test', function(Request $request, Response $response) {
+  $players = $this->db->select('player', '*');
+
+  $response->getBody()->write('<pre>'.print_r($players, true));
+
+  return $response;
 });
 
 $app->get('/get-page-test', function(Request $request, Response $response) {
@@ -80,37 +112,19 @@ $app->get('/scrape-page', function(Request $request, Response $response) {
 
   $html = $response->body;
 
-  $database = new medoo([
-    'database_type' => 'mysql',
-    'database_name' => $this->get('settings')['db']['dbname'],
-    'server' => $this->get('settings')['db']['host'],
-    'username' => $this->get('settings')['db']['user'],
-    'password' => $this->get('settings')['db']['pass'],
-    'charset' => 'utf8'
-  ]);
-
-  $database->insert('page_scrape', [
+  $this->db->insert('page_scrape', [
     'url' => $url,
     'html' => $html
   ]);
 });
 
 $app->get('/parse-stored-html', function(Request $request, Response $response) {
-  $database = new medoo([
-    'database_type' => 'mysql',
-    'database_name' => $this->get('settings')['db']['dbname'],
-    'server' => $this->get('settings')['db']['host'],
-    'username' => $this->get('settings')['db']['user'],
-    'password' => $this->get('settings')['db']['pass'],
-    'charset' => 'utf8'
-  ]);
 
-  $pageScrapes = $database->select('page_scrape', '*');
-  // echo '<pre>';
-  // print_r($pageScrapes);
-  // die();
+  $pageScrapes = $this->db->select('page_scrape', '*');
+
   if ( $pageScrapes && count($pageScrapes) > 0)
     $pageScrape = $pageScrapes[0];
+
   $url = $pageScrape['url'];
   $html = $pageScrape['html'];
 

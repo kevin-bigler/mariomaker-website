@@ -1,8 +1,13 @@
 # Enable Routing for Slim PHP
-RewriteEngine On
-RewriteCond %{REQUEST_FILENAME} !-f
+RewriteEngine on
 RewriteCond %{REQUEST_FILENAME} !-d
-RewriteRule ^ index.php [QSA,L]
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteRule . index.php [L]
+
+# Slim v2 docs version (routing):
+#RewriteEngine On
+#RewriteCond %{REQUEST_FILENAME} !-f
+#RewriteRule ^ index.php [QSA,L]
 
 # Basic Auth (password required)
 AuthName "Restricted Area"

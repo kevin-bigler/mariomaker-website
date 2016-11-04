@@ -1,3 +1,10 @@
+# Enable Routing for Slim PHP
+RewriteEngine On
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^ index.php [QSA,L]
+
+# Basic Auth (password required)
 AuthName "Restricted Area"
 AuthType Basic
 AuthUserFile /home/mariomaker/public_html/.htpasswd

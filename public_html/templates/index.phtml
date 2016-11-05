@@ -29,8 +29,8 @@
         <div class="pure-u-1">
           <h3><?= $level['title'] ?>: [<?= $level['level_code'] ?>]</h3>
           <ul>
-            <li><a href="<?=/*$router->pathFor('scrape-level', [])*/''?>">Scrape</a></li>
-            <li><a href="<?=/*$router->pathFor('parse-level', [])*/''?>">Parse</a></li>
+            <li><a target="_blank" href="<?=$router->pathFor('scrape-level', ['level_code' => $level['level_code']])?>">Scrape</a></li>
+            <li><a target="_blank" href="<?=$router->pathFor('parse-level', ['level_code' => $level['level_code']])?>">Parse</a></li>
             <li><a href="<?=/*$router->pathFor('view-level', [])*/''?>">View</a></li>
           </ul>
         </div>

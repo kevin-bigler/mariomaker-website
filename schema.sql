@@ -7,6 +7,8 @@ CREATE TABLE `page_scrape` (
   `url` text NOT NULL,
   `html` longtext NOT NULL,
   `response_code` text NOT NULL,
+  `scrape_type` tinytext NOT NULL,
+  `scrape_params` text NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 

@@ -9,6 +9,8 @@ use \Psr\Http\Message\ResponseInterface as Response;
 
 use PHPHtmlParser\Dom;
 
+use \KevinBigler\MM;
+
 require '../composer/vendor/autoload.php';
 
 require __DIR__ . '/db_config.php';
@@ -58,11 +60,52 @@ $app->get('/', function(Request $request, Response $response) {
   return $response;
 });
 
-$app->get('/scrape/level/{level_id}', function (Request $request, Response $response, $args) {
-  $levelId = $args['level_id'];
+$app->get('/scrape/level/{level_code}', function (Request $request, Response $response, $args) {
+  $levelCode = $args['level_code'];
 
-  $response->getBody()->write('level id: ' . $levelId);
+  $url = 'https://supermariomakerbookmark.nintendo.net/courses/' . $levelCode;
+
+  $pageResponse = \Httpful\Request::get($url)
+    ->expectsHtml()
+    ->send();
+
+  $html = $pageResponse->body;
+  $responseCode = $pageResponse->code;
+
+  $this->db->insert('page_scrape', [
+    'url' => $url,
+    'html' => $html,
+    'response_code' => $responseCode
+  ]);
+
+  $response = $this->view->render($response, "scrape-level.phtml", ["router" => $this->router, "level_code" => $levelCode]);
+  return $response;
+
 })->setName('scrape-level');
+
+$app->get('/parse/level/{level_code}', function(Request $request, Response $response, $args) {
+  $levelCode = $args['level_code'];
+
+  $latestScrapes = $this->db->select('page_scrape', '*', [
+    'ORDER' => ['updated' => 'DESC'],
+    'LIMIT' => 1
+  ]);
+
+  if ($latestScrapes && is_array($latestScrapes) && count($latestScrapes) > 0) {
+    $latestScrape = $latestScrapes[0];
+
+    $html = $latestScrape['html'];
+
+    $levelParser = new MM\LevelParser();
+    $output = $levelParser->basicTest('so much fun');
+
+    die($output);
+  }
+
+  $response = $this->view->render($response, "parse-level.phtml", ["router" => $this->router, "level_code" => $levelCode]);
+  return $response;
+
+})->setName('parse-level');
 
 $app->get('/scrape/player/{player_id}', function (Request $request, Response $response, $args) {
   $playerId = $args['player_id'];

@@ -18,6 +18,7 @@ CREATE TABLE `level` (
   `level_code` varchar(19) NOT NULL,
   `player_id` int(10) unsigned DEFAULT NULL,
   `player_nintendo_id` text DEFAULT NULL,
+  `title` text DEFAULT NULL,
   `image_url` text DEFAULT NULL,
   `image_full_url` text DEFAULT NULL,
   `upload_date` date DEFAULT NULL,

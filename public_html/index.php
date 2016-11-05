@@ -51,6 +51,30 @@ $container['db'] = function($c) {
 
 $container['view'] = new \Slim\Views\PhpRenderer("./templates/");
 
+$app->get('/', function(Request $request, Response $response) {
+  $levels = $this->db->select('level', '*');
+  // $levels = [];
+  $response = $this->view->render($response, "index.phtml", ["router" => $this->router, "levels" => $levels]);
+  return $response;
+});
+
+$app->get('/scrape/level/{level_id}', function (Request $request, Response $response, $args) {
+  $levelId = $args['level_id'];
+
+  $response->getBody()->write('level id: ' . $levelId);
+})->setName('scrape-level');
+
+$app->get('/scrape/player/{player_id}', function (Request $request, Response $response, $args) {
+  $playerId = $args['player_id'];
+
+  $response->getBody()->write('player id: ' . $playerId);
+})->setName('scrape-player');
+
+$app->get('/template/test/{secret}', function(Request $request, Response $response, $args) {
+  $response = $this->view->render($response, "template-test.phtml", ["secret" => $args['secret']]);
+  return $response;
+});
+
 $app->get('/hello/{name}', function (Request $request, Response $response) {
   $name = $request->getAttribute('name');
   $response->getBody()->write("Hello, $name");
@@ -66,18 +90,6 @@ $app->get('/get-params-test', function (Request $request, Response $response) {
   $levelData['level_id'] = filter_var($data['level_id'], FILTER_SANITIZE_STRING);
 
   $response->getBody()->write('<pre>'.print_r($levelData, true));
-});
-
-$app->get('/scrape/level/{level_id}', function (Request $request, Response $response, $args) {
-  $levelId = $args['level_id'];
-
-  $response->getBody()->write('level id: ' . $levelId);
-});
-
-$app->get('/scrape/player/{player_id}', function (Request $request, Response $response, $args) {
-  $playerId = $args['player_id'];
-
-  $response->getBody()->write('player id: ' . $playerId);
 });
 
 $app->get('/db-test', function(Request $request, Response $response) {

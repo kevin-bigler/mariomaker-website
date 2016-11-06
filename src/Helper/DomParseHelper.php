@@ -36,13 +36,19 @@ class DomParseHelper {
     return explode( ' ', $element->getAttribute('class') );
   }
 
-  public function getPlayerBasicInfo($elements) {
+  public function getPlayerBasicInfo($userWrapperElements) {
     // TODO
+    /*
+      Example from a "Cleared by" list item:
+      <div class="user-wrapper"><div class="mii-wrapper"><a id="mii" class="icon-mii link bg-white" href="/profile/Itsaname42?type=posted"><img src="http://mii-images.cdn.nintendo.net/1f1x0xp88j36o_normal_face.png" alt="1f1x0xp88j36o normal face"></a></div><div class="user-info"><div class="flag US"></div><div class="name">Aaron</div></div></div>
+    */
     return [
+      [
       'name' => '',
       'nintendo_id' => '',
       'flag' => '',
       'profile_image_url' => ''
+      ]
     ];
   }
 

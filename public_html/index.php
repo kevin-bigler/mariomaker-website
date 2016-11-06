@@ -101,8 +101,8 @@ $app->get('/parse/level/{level_code}', function(Request $request, Response $resp
 
     $levelParser = new MM\LevelParser();
 
-    $levelParser->parseLevelData($html);
-    // $levelParser->parseLevelSnapshotData($html);
+    // $levelParser->parseLevelData($html);
+    $levelParser->parseLevelSnapshotData($html);
   }
 
   $response = $this->view->render($response, "parse-level.phtml", ["router" => $this->router, "level_code" => $levelCode]);

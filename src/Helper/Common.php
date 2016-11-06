@@ -21,4 +21,16 @@ class Common {
     return substr($string, $ini, $len);
   }
 
+  public function stringContainsString($haystack, $needle) {
+    return strpos($haystack, $needle) !== false;
+  }
+
+  public function stringAfterString($haystack, $delimiter) {
+    $arr = explode($delimiter, $haystack);
+    if (count($arr) > 0)
+      return $arr[1];
+    else
+      return '';
+  }
+
 }

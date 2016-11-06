@@ -54,6 +54,9 @@ $container['db'] = function($c) {
 $container['view'] = new \Slim\Views\PhpRenderer("./templates/");
 
 $app->get('/', function(Request $request, Response $response) {
+
+  // $this->logger->addInfo("Index page visited");
+
   $levels = $this->db->select('level', '*');
   // $levels = [];
   $response = $this->view->render($response, "index.phtml", ["router" => $this->router, "levels" => $levels]);
@@ -97,9 +100,11 @@ $app->get('/parse/level/{level_code}', function(Request $request, Response $resp
     $html = $latestScrape['html'];
 
     $levelParser = new MM\LevelParser();
-    $output = $levelParser->basicTest('so much fun');
 
-    die($output);
+    // $output = $levelParser->basicTest('so much fun');
+    // die($output);
+
+    $levelParser->parseLevelData($html);
   }
 
   $response = $this->view->render($response, "parse-level.phtml", ["router" => $this->router, "level_code" => $levelCode]);
@@ -113,16 +118,10 @@ $app->get('/scrape/player/{player_id}', function (Request $request, Response $re
   $response->getBody()->write('player id: ' . $playerId);
 })->setName('scrape-player');
 
-$app->get('/template/test/{secret}', function(Request $request, Response $response, $args) {
-  $response = $this->view->render($response, "template-test.phtml", ["secret" => $args['secret']]);
-  return $response;
-});
-
 $app->get('/hello/{name}', function (Request $request, Response $response) {
   $name = $request->getAttribute('name');
   $response->getBody()->write("Hello, $name");
 
-  $this->logger->addInfo("Something interesting happened");
 
   return $response;
 });
@@ -133,14 +132,6 @@ $app->get('/get-params-test', function (Request $request, Response $response) {
   $levelData['level_id'] = filter_var($data['level_id'], FILTER_SANITIZE_STRING);
 
   $response->getBody()->write('<pre>'.print_r($levelData, true));
-});
-
-$app->get('/db-test', function(Request $request, Response $response) {
-  $players = $this->db->select('player', '*');
-
-  $response->getBody()->write('<pre>'.print_r($players, true));
-
-  return $response;
 });
 
 $app->get('/get-page-test', function(Request $request, Response $response) {
@@ -158,36 +149,5 @@ $app->get('/get-page-test', function(Request $request, Response $response) {
   echo 'course title: ' . $courseTitle;
 });
 
-$app->get('/scrape-page', function(Request $request, Response $response) {
-  $url = 'https://supermariomakerbookmark.nintendo.net/courses/DC0C-0000-02AD-6EBC';
-
-  $response = \Httpful\Request::get($url)
-    ->expectsHtml()
-    ->send();
-
-  $html = $response->body;
-
-  $this->db->insert('page_scrape', [
-    'url' => $url,
-    'html' => $html
-  ]);
-});
-
-$app->get('/parse-stored-html', function(Request $request, Response $response) {
-
-  $pageScrapes = $this->db->select('page_scrape', '*');
-
-  if ( $pageScrapes && count($pageScrapes) > 0)
-    $pageScrape = $pageScrapes[0];
-
-  $url = $pageScrape['url'];
-  $html = $pageScrape['html'];
-
-  $dom = new Dom;
-  $dom->load($html);
-  $courseTitle = $dom->find('.course-title')[0]->text;
-  echo 'course title: ' . $courseTitle . '<br><br>';
-  echo 'from html stored by initially scraping url: ' . $url;
-});
 
 $app->run();

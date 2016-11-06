@@ -35,6 +35,7 @@ CREATE TABLE `level_snapshot` (
   `updated` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   `page_scrape_id` int(10) unsigned DEFAULT NULL,
   `level_id` int(10) unsigned DEFAULT NULL,
+  `level_code` varchar(19) DEFAULT NULL,
   `difficulty_rank` text DEFAULT NULL,
   `clear_rate` DECIMAL(5, 2) DEFAULT NULL,
   `number_stars` int(10) unsigned DEFAULT NULL,

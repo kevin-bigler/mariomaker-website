@@ -78,7 +78,9 @@ $app->get('/scrape/level/{level_code}', function (Request $request, Response $re
   $this->db->insert('page_scrape', [
     'url' => $url,
     'html' => $html,
-    'response_code' => $responseCode
+    'response_code' => $responseCode,
+    'scrape_type' => 'level',
+    'scrape_params' => $levelCode
   ]);
 
   $response = $this->view->render($response, "scrape-level.phtml", ["router" => $this->router, "level_code" => $levelCode]);
@@ -101,8 +103,8 @@ $app->get('/parse/level/{level_code}', function(Request $request, Response $resp
 
     $levelParser = new MM\LevelParser();
 
-    $levelParser->parseLevelData($html);
-    // $levelParser->parseLevelSnapshotData($html);
+    // $levelParser->parseLevelData($html);
+    $levelParser->parseLevelSnapshotData($html);
   }
 
   $response = $this->view->render($response, "parse-level.phtml", ["router" => $this->router, "level_code" => $levelCode]);

@@ -48,6 +48,7 @@ class LevelParser {
 
     // player_nintendo_id
     $level->playerNintendoId = $this->domParseHelper->getPlayerNintendoIdFromProfileLink( $dom->find('.creator a#mii') );
+    $level->playerInfo = $this->domParseHelper->getPlayerBasicInfo( $dom->find('.course-detail-wrapper') );
     // $creatorUrl = $this->domParseHelper->firstElementAttribute( $dom->find('.creator a#mii'), 'href' );
     // if ($creatorUrl) {
     //   // example: href="/profile/thek3vinator?type=posted"

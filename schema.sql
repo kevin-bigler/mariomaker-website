@@ -52,8 +52,8 @@ CREATE TABLE `level_snapshot` (
   `first_clear_player_id` int(10) unsigned DEFAULT NULL,
   `first_clear_player_nintendo_id` text DEFAULT NULL,
   `recent_players_nintendo_ids` longtext DEFAULT NULL,
-  `cleared_by_nintendo_ids` longtext DEFAULT NULL,
-  `starred_by_nintendo_ids` longtext DEFAULT NULL,
+  `cleared_by_players_nintendo_ids` longtext DEFAULT NULL,
+  `starred_by_players_nintendo_ids` longtext DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 

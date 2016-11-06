@@ -41,4 +41,12 @@ class Common {
       return '';
   }
 
+  public function forceUtf8($str) {
+    return \ForceUTF8\Encoding::toUTF8($str);
+  }
+
+  public function forceLatin1($str) {
+    return \ForceUTF8\Encoding::toLatin1($str);
+  }
+
 }

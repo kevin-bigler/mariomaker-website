@@ -99,8 +99,8 @@ class LevelParser {
       `first_clear_player_id` int(10) unsigned DEFAULT NULL,
       `first_clear_player_nintendo_id` text DEFAULT NULL,
       `recent_players_nintendo_ids` longtext DEFAULT NULL,
-      `cleared_by_nintendo_ids` longtext DEFAULT NULL,
-      `starred_by_nintendo_ids` longtext DEFAULT NULL,
+      `cleared_by_players_nintendo_ids` longtext DEFAULT NULL,
+      `starred_by_players_nintendo_ids` longtext DEFAULT NULL,
     */
 
     $dom = new Dom;
@@ -142,7 +142,7 @@ class LevelParser {
 
     // world_record_player_nintendo_id
     $levelSnapshot->worldRecordPlayerNintendoId = $this->domParseHelper->getPlayerNintendoIdFromProfileLink( $dom->find('.fastest-time-wrapper a#mii') );
-    // TODO can also get their flag and name from this view
+    $levelSnapshot->worldRecordPlayerInfo = $this->domParseHelper->getPlayerBasicInfo( $dom->find('.fastest-time-wrapper .user-wrapper') );
 
     // world_record_time
     $levelSnapshot->worldRecordTime = $this->getTypographyNumber( $dom->find('.clear-time') );
@@ -152,20 +152,23 @@ class LevelParser {
 
     // first_clear_player_nintendo_id
     $levelSnapshot->firstClearPlayerNintendoId = $this->domParseHelper->getPlayerNintendoIdFromProfileLink( $dom->find('.first-user a#mii') );
-    // TODO can also get their flag and name from this view
+    $levelSnapshot->firstClearPlayerInfo = $this->domParseHelper->getPlayerBasicInfo( $dom->find('.first-user .user-wrapper') );
 
     // recent_players_nintendo_ids
     $levelSnapshot->recentPlayersNintendoIds = $this->domParseHelper->getAllPlayerNintendoIdsFromProfileLinks( $dom->find('.played-body .user-info-wrapper a#mii') );
-    // TODO can also get their flags and names from this view
+    $levelSnapshot->recentPlayersInfos = $this->domParseHelper->getPlayersBasicInfos( $dom->find('.played-body .user-wrapper') );
 
-    // cleared_by_nintendo_ids
-    $levelSnapshot->clearedByNintendoIds = $this->domParseHelper->getAllPlayerNintendoIdsFromProfileLinks( $dom->find('.cleared-body .user-info-wrapper a#mii') );
-    // TODO can also get their flags and names from this view
+    // cleared_by_players_nintendo_ids
+    $levelSnapshot->clearedByPlayersNintendoIds = $this->domParseHelper->getAllPlayerNintendoIdsFromProfileLinks( $dom->find('.cleared-body .user-info-wrapper a#mii') );
+    $levelSnapshot->clearedByPlayersInfos = $this->domParseHelper->getPlayersBasicInfos( $dom->find('.cleared-body .user-wrapper') );
 
-    // starred_by_nintendo_ids
-    $levelSnapshot->starredByNintendoIds = $this->domParseHelper->getAllPlayerNintendoIdsFromProfileLinks( $dom->find('.liked-body .user-info-wrapper a#mii') );
-    // TODO can also get their flags and names from this view
+    // starred_by_players_nintendo_ids
+    $levelSnapshot->starredByPlayersNintendoIds = $this->domParseHelper->getAllPlayerNintendoIdsFromProfileLinks( $dom->find('.liked-body .user-info-wrapper a#mii') );
+    $levelSnapshot->starredByPlayersInfos = $this->domParseHelper->getPlayersBasicInfos( $dom->find('.liked-body .user-wrapper') );
 
+    // echo '<html><header><meta charset="utf-8" /></header><body>';
+    // header('Content-Type: text/html;charset=utf-8');
+    // TODO need to set the database charset to utf-8 (and change schema.sql to reflect that)
     echo 'levelSnapshot:<pre>';
     print_r($levelSnapshot);
     die();

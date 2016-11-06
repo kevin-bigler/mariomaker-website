@@ -36,6 +36,7 @@ CREATE TABLE `level_snapshot` (
   `page_scrape_id` int(10) unsigned DEFAULT NULL,
   `level_id` int(10) unsigned DEFAULT NULL,
   `level_code` varchar(19) DEFAULT NULL,
+  `player_profile_image_url` text DEFAULT NULL,
   `difficulty_rank` text DEFAULT NULL,
   `clear_rate` DECIMAL(5, 2) DEFAULT NULL,
   `number_stars` int(10) unsigned DEFAULT NULL,

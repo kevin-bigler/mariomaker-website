@@ -27,8 +27,16 @@ class Common {
 
   public function stringAfterString($haystack, $delimiter) {
     $arr = explode($delimiter, $haystack);
-    if (count($arr) > 0)
+    if (count($arr) > 1)
       return $arr[1];
+    else
+      return '';
+  }
+
+  public function stringBeforeString($haystack, $delimiter) {
+    $arr = explode($delimiter, $haystack);
+    if (count($arr) > 0)
+      return $arr[0];
     else
       return '';
   }

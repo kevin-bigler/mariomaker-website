@@ -27,6 +27,7 @@ CREATE TABLE `level` (
   `created` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `updated` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   `level_code` varchar(19) NOT NULL,
+  `track` tinyint(1) unsigned NOT NULL DEFAULT 0,
   `player_id` int(10) unsigned DEFAULT NULL,
   `player_nintendo_id` text DEFAULT NULL,
   `player_info` text DEFAULT NULL,

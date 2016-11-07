@@ -127,6 +127,11 @@ $app->get('/parse/level/{level_code}', function(Request $request, Response $resp
     $levelSnapshotDb = $modelHelper->objectToDatabaseAssoc($levelSnapshot);
     $levelSnapshotDb['level_code'] = $levelCode;
     $levelSnapshotDb['page_scrape_id'] = $latestScrape['id'];
+
+    $levelIdSelect = $this->db->select('level', 'id', ['level_code' => $levelCode]);
+    if ($levelIdSelect && is_array($levelIdSelect))
+      $levelSnapshotDb['level_id'] = $levelIdSelect[0];
+
     $this->db->insert('level_snapshot', $levelSnapshotDb);
 
     // die($this->db->last_query());

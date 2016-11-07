@@ -15,6 +15,8 @@ require '../composer/vendor/autoload.php';
 
 require __DIR__ . '/db_config.php';
 
+$pkg = '\\KevinBigler\\MM\\';
+
 $config['displayErrorDetails'] = true;
 $config['addContentLengthHeader'] = false;
 
@@ -53,6 +55,14 @@ $container['db'] = function($c) {
 
 $container['view'] = new \Slim\Views\PhpRenderer("./templates/");
 
+// Controllers
+// $container->register(new \Jgut\Slim\Controller\Registrator);
+
+// $container['LevelController'] = function ($container) {
+//     return new MM\LevelController($container);
+// };
+
+
 $app->get('/', function(Request $request, Response $response) {
 
   // $this->logger->addInfo("Index page visited");
@@ -62,6 +72,8 @@ $app->get('/', function(Request $request, Response $response) {
   $response = $this->view->render($response, "index.phtml", ["router" => $this->router, "levels" => $levels]);
   return $response;
 });
+
+$app->get('/levels', $pkg . 'LevelController:levelsIndex');
 
 $app->get('/scrape/level/{level_code}', function (Request $request, Response $response, $args) {
   $levelCode = $args['level_code'];

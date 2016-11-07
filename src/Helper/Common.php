@@ -49,4 +49,12 @@ class Common {
     return \ForceUTF8\Encoding::toLatin1($str);
   }
 
+  public function camelCaseToUnderscore($str) {
+    return strtolower( \SSD\StringConverter\Factory::camelToUnderscore($str) );
+  }
+
+  public function underscoreToCamelCase($str) {
+    return strtolower( \SSD\StringConverter\Factory::underscoreToCamel($str) );
+  }
+
 }

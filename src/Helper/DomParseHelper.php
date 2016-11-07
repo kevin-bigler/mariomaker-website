@@ -36,8 +36,7 @@ class DomParseHelper {
     return explode( ' ', $element->getAttribute('class') );
   }
 
-  public function getPlayersBasicInfos($userWrapperElements) {
-    // TODO
+  public function getPlayersBasicInfos($userWrapperElements, $asArray = false) {
     /*
       Example from a "Cleared by" list item:
       <div class="user-wrapper">
@@ -53,7 +52,7 @@ class DomParseHelper {
     $allPlayers = [];
     if ($userWrapperElements->count() > 0) {
       foreach ($userWrapperElements as $userWrapperElement) {
-        $allPlayers[] = $this->getPlayerBasicInfo($userWrapperElement);
+        $allPlayers[] = $this->getPlayerBasicInfo($userWrapperElement, true);
       }
     }
     // return [
@@ -64,10 +63,10 @@ class DomParseHelper {
     //   'profile_image_url' => ''
     //   ]
     // ];
-    return $allPlayers;
+    return $asArray ? $allPlayers : json_encode($allPlayers);
   }
 
-  public function getPlayerBasicInfo($userWrapperElement) {
+  public function getPlayerBasicInfo($userWrapperElement, $asArray = false) {
     if ( ! $userWrapperElement || $userWrapperElement->count() < 1)
       return null;
 
@@ -93,7 +92,7 @@ class DomParseHelper {
     // 'flag' => '',
     // 'profile_image_url' => ''
     // ];
-    return $player;
+    return $asArray ? $player : json_encode($player);
   }
 
   public function getPlayerNintendoIdFromProfileLink($linkElements) {
@@ -105,12 +104,12 @@ class DomParseHelper {
     return null;
   }
 
-  public function getAllPlayerNintendoIdsFromProfileLinks($linkElements) {
+  public function getAllPlayerNintendoIdsFromProfileLinks($linkElements, $asArray = false) {
     $playerNintendoIds = [];
     foreach ($linkElements as $linkElement) {
       $playerNintendoIds[] = $this->getPlayerNintendoIdFromProfileUrl( $linkElement->getAttribute('href') );
     }
-    return $playerNintendoIds;
+    return $asArray ? $playerNintendoIds : json_encode($playerNintendoIds);
   }
 
   public function getPlayerNintendoIdFromProfileUrl($url) {

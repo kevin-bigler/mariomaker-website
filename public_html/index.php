@@ -92,22 +92,54 @@ $app->get('/parse/level/{level_code}', function(Request $request, Response $resp
   $levelCode = $args['level_code'];
 
   $latestScrapes = $this->db->select('page_scrape', '*', [
+    'AND' => [
+      'scrape_type' => 'level',
+      'scrape_params' => $levelCode
+    ],
     'ORDER' => ['updated' => 'DESC'],
     'LIMIT' => 1
   ]);
 
+  // die($this->db->last_query());
+
+  $foundScrape = false;
+
   if ($latestScrapes && is_array($latestScrapes) && count($latestScrapes) > 0) {
+    $foundScrape = true;
     $latestScrape = $latestScrapes[0];
 
     $html = $latestScrape['html'];
 
     $levelParser = new MM\LevelParser();
+    $modelHelper = new MM\Helper\ModelHelper();
 
-    // $levelParser->parseLevelData($html);
-    $levelParser->parseLevelSnapshotData($html);
+    if ( ! $this->db->has('level', [ 'level_code' => $levelCode ]) ) {
+      $level = $levelParser->parseLevelData($html);
+      $levelDb = $modelHelper->objectToDatabaseAssoc($level);
+      $levelDb['level_code'] = $levelCode;
+      $this->db->insert('level', $levelDb);
+    }
+
+    $levelSnapshot = $levelParser->parseLevelSnapshotData($html);
+    // echo 'levelSnapshot<pre>';
+    // print_r($levelSnapshot);
+    // die();
+    $levelSnapshotDb = $modelHelper->objectToDatabaseAssoc($levelSnapshot);
+    $levelSnapshotDb['level_code'] = $levelCode;
+    $levelSnapshotDb['page_scrape_id'] = $latestScrape['id'];
+    $this->db->insert('level_snapshot', $levelSnapshotDb);
+
+    // die($this->db->last_query());
+    // echo '<pre>';
+    // print_r($this->db->error());
+    // die();
+
+    // echo 'levelDb<pre>';
+    // print_r($levelSnapshotDb);
+    // die();
   }
 
-  $response = $this->view->render($response, "parse-level.phtml", ["router" => $this->router, "level_code" => $levelCode]);
+  $response = $this->view->render($response, "parse-level.phtml", ["router" => $this->router, "level_code" => $levelCode, "found_scrape" => $foundScrape]);
   return $response;
 
 })->setName('parse-level');

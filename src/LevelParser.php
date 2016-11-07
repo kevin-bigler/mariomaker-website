@@ -36,11 +36,12 @@ class LevelParser {
 
     /*
       `player_nintendo_id` text DEFAULT NULL,
+      `player_info` text DEFAULT NULL,
       `title` text DEFAULT NULL,
       `image_url` text DEFAULT NULL,
       `image_full_url` text DEFAULT NULL,
       `upload_date` date DEFAULT NULL,
-      `gameskin` text DEFAULT NULL,
+      `gameskin` text DEFAULT NULL, -- mode (SMB1, SMB2, SMW, NSMB)
     */
 
     $dom = new Dom;
@@ -48,12 +49,9 @@ class LevelParser {
 
     // player_nintendo_id
     $level->playerNintendoId = $this->domParseHelper->getPlayerNintendoIdFromProfileLink( $dom->find('.creator a#mii') );
+
+    // player_info
     $level->playerInfo = $this->domParseHelper->getPlayerBasicInfo( $dom->find('.course-detail-wrapper') );
-    // $creatorUrl = $this->domParseHelper->firstElementAttribute( $dom->find('.creator a#mii'), 'href' );
-    // if ($creatorUrl) {
-    //   // example: href="/profile/thek3vinator?type=posted"
-    //   $level->playerNintendoId = $this->common->stringBetweenStrings($creatorUrl, '/profile/', '?');
-    // }
 
     // title
     $level->title = $this->domParseHelper->firstElementText( $dom->find('.course-title') );
@@ -75,16 +73,17 @@ class LevelParser {
     // -- mode (SMB1, SMB2, SMW, NSMB)
     $level->gameskin = $this->getGameskin($dom);
 
-    echo 'level:<pre>';
-    print_r($level);
-    die();
+    // echo 'level:<pre>';
+    // print_r($level);
+    // die();
+    return $level;
   }
 
   public function parseLevelSnapshotData($html) {
     $levelSnapshot = new Model\LevelSnapshot();
 
     /*
-      `player_profile_image_url` text DEFAULT NULL,
+      `player_info` text DEFAULT NULL,
       `difficulty_rank` text DEFAULT NULL,
       `clear_rate` DECIMAL(5, 2) DEFAULT NULL,
       `number_stars` int(10) unsigned DEFAULT NULL,
@@ -107,8 +106,8 @@ class LevelParser {
     $dom = new Dom;
     $dom->load($html);
 
-    // player_profile_image_url
-    // TODO
+    // player_info
+    $levelSnapshot->playerInfo = $this->domParseHelper->getPlayerBasicInfo( $dom->find('.course-detail-wrapper') );
 
     // difficulty_rank
     $levelSnapshot->difficultyRank = $this->domParseHelper->firstElementText( $dom->find('.course-header') );
@@ -143,6 +142,8 @@ class LevelParser {
 
     // world_record_player_nintendo_id
     $levelSnapshot->worldRecordPlayerNintendoId = $this->domParseHelper->getPlayerNintendoIdFromProfileLink( $dom->find('.fastest-time-wrapper a#mii') );
+
+    // world_record_player_info
     $levelSnapshot->worldRecordPlayerInfo = $this->domParseHelper->getPlayerBasicInfo( $dom->find('.fastest-time-wrapper .user-wrapper') );
 
     // world_record_time
@@ -153,28 +154,35 @@ class LevelParser {
 
     // first_clear_player_nintendo_id
     $levelSnapshot->firstClearPlayerNintendoId = $this->domParseHelper->getPlayerNintendoIdFromProfileLink( $dom->find('.first-user a#mii') );
+
+    // first_clear_player_info
     $levelSnapshot->firstClearPlayerInfo = $this->domParseHelper->getPlayerBasicInfo( $dom->find('.first-user .user-wrapper') );
 
     // recent_players_nintendo_ids
     $levelSnapshot->recentPlayersNintendoIds = $this->domParseHelper->getAllPlayerNintendoIdsFromProfileLinks( $dom->find('.played-body .user-info-wrapper a#mii') );
+
+    // recent_players_infos
     $levelSnapshot->recentPlayersInfos = $this->domParseHelper->getPlayersBasicInfos( $dom->find('.played-body .user-wrapper') );
 
     // cleared_by_players_nintendo_ids
     $levelSnapshot->clearedByPlayersNintendoIds = $this->domParseHelper->getAllPlayerNintendoIdsFromProfileLinks( $dom->find('.cleared-body .user-info-wrapper a#mii') );
+
+    // cleared_by_players_infos
     $levelSnapshot->clearedByPlayersInfos = $this->domParseHelper->getPlayersBasicInfos( $dom->find('.cleared-body .user-wrapper') );
 
     // starred_by_players_nintendo_ids
     $levelSnapshot->starredByPlayersNintendoIds = $this->domParseHelper->getAllPlayerNintendoIdsFromProfileLinks( $dom->find('.liked-body .user-info-wrapper a#mii') );
+
+    // starred_by_players_infos
     $levelSnapshot->starredByPlayersInfos = $this->domParseHelper->getPlayersBasicInfos( $dom->find('.liked-body .user-wrapper') );
 
-    // echo '<html><header><meta charset="utf-8" /></header><body>';
-    // header('Content-Type: text/html;charset=utf-8');
-    // TODO need to set the database charset to utf-8 (and change schema.sql to reflect that)
-    echo 'levelSnapshot:<pre>';
-    print_r($levelSnapshot);
-    die();
+    // echo 'levelSnapshot:<pre>';
+    // print_r($levelSnapshot);
+    // die();
+    return $levelSnapshot;
   }
 
+  // TODO move this to the DomParseHelper class
   private function getTypographyNumber($element) {
     /*
       Example (6.45%)

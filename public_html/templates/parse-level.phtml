@@ -17,7 +17,11 @@
     <h1>Parse Level</h1>
 
     <p>
-      Parsed Level with level code: <?= $level_code ?>
+      <?php if ($found_scrape) { ?>
+        Parsed Level with level code: <?= $level_code ?>
+      <?php } else { ?>
+        Could not find any scrapes for this level (code: <?= $level_code ?>).
+      <?php } ?>
     </p>
 
 <script>

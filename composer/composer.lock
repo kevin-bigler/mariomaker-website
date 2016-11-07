@@ -4,8 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "1b27bde2728562e23a3af81a6381f74e",
-    "content-hash": "acc06a1496dcd9b822e07a9590ebd23d",
+    "hash": "c36150e2c62b902dc041c2bd5dc15b0c",
+    "content-hash": "395e221fe3cc26463ef1cc9c407f35ce",
     "packages": [
         {
             "name": "catfan/medoo",
@@ -531,6 +531,45 @@
                 "psr-3"
             ],
             "time": "2016-10-10 12:19:37"
+        },
+        {
+            "name": "sebastiansulinski/string-converter",
+            "version": "v2.0.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/sebastiansulinski/string-converter.git",
+                "reference": "0e697f70ab77dcd20fc3083323704386dcf34891"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/sebastiansulinski/string-converter/zipball/0e697f70ab77dcd20fc3083323704386dcf34891",
+                "reference": "0e697f70ab77dcd20fc3083323704386dcf34891",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.4.0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "4.7.*@dev"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "SSD\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Sebastian Sulinski",
+                    "email": "info@ssdtutorials.com"
+                }
+            ],
+            "description": "Convert between snake and camel case, hyphen to camel case, to constant name, ucfirst, ucwords",
+            "time": "2016-07-31 08:25:58"
         },
         {
             "name": "slim/php-view",

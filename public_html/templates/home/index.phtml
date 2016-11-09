@@ -23,21 +23,11 @@
       - view displays the latest snapshot of data for the level
     -->
 
-    <h2>Levels</h2>
-    <?php foreach ($levels as $level) { ?>
-      <div class="pure-g">
-        <div class="pure-u-1">
-          <h3><?= $level['title'] ?>: [<?= $level['level_code'] ?>]</h3>
-          <ul>
-            <li><a target="_blank" href="<?=$router->pathFor('scrape-level', ['level_code' => $level['level_code']])?>">Scrape</a></li>
-            <li><a target="_blank" href="<?=$router->pathFor('parse-level', ['level_code' => $level['level_code']])?>">Parse</a></li>
-            <li><a href="<?=/*$router->pathFor('view-level', [])*/''?>">View</a></li>
-          </ul>
-        </div>
-      </div>
-    <?php } ?>
-
-    <!-- TODO later add iteration over players -->
+    <h2>Sections</h2>
+    <ul>
+      <li><a href="<?= $router->pathFor('levels') ?>">Levels</a></li>
+      <li><a href="<?= /*$router->pathFor('levels')*/'' ?>">Players</a></li>
+    </ul>
 
 </body>
 </html>

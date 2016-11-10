@@ -74,6 +74,7 @@ $app->get('/', $homeController . ':index')->setName('home');
 // -----------------------------------------------------------------------------
 $levelController = $pkg . 'LevelController';
 $app->get('/levels', $levelController . ':index')->setName('levels');
+$app->get('/levels/takeSnapshots', $levelController . ':takeSnapshots')->setName('take-snapshots-levels');
 
 // {level_code} can have this regex: [0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}
 // however, we probably should handle that in the controller (not as part of the route regex) so that we can give meaningful errors per page where the user has failed to comply with that regex
@@ -82,7 +83,9 @@ $app->group('/levels/{level_code}', function() {
   $this->get('', $levelController . ':detail')->setName('level');
   $this->get('/scrape', $levelController . ':scrape')->setName('scrape-level');
   $this->get('/parse', $levelController . ':parse')->setName('parse-level');
-  $this->get('/scrape-and-parse', $levelController . ':scrapeAndParse')->setName('scrape-and-parse-level');
+  $this->get('/take-snapshot', $levelController . ':takeSnapshot')->setName('take-snapshot-level');
+  $this->get('/scrapes', $levelController . ':scrapes')->setName('scrapes');
+  $this->get('/snapshots', $levelController . ':snapshots')->setName('snapshots');
 });
 
 // -----------------------------------------------------------------------------

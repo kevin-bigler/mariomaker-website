@@ -1,0 +1,30 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>MarioMaker Tracking</title>
+
+    <link rel="stylesheet" href="http://yui.yahooapis.com/pure/0.6.0/pure-min.css">
+</head>
+
+<body>
+    
+    <h1>Take Snapshot of Level</h1>
+
+    <p>
+      <?php if ($found_scrape) { ?>
+        New Snapshot for Level with level code: <?= $level_code ?>
+      <?php } else { ?>
+        Unable to take Snapshot of this Level with code: <?= $level_code ?>
+      <?php } ?>
+    </p>
+
+<script>
+  // console.log('test');
+  // var fifteenMinutesMilliseconds = 15 * 60 * 1000;
+  // setTimeout(function(){ location.reload(); }, fifteenMinutesMilliseconds);
+</script>
+</body>
+</html>

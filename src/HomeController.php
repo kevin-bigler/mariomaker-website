@@ -18,7 +18,7 @@ class HomeController {
 
     // $this->logger->addInfo("Index page visited");
 
-    $response = $this->ci->view->render($response, "home/index.phtml", ["router" => $this->ci->router]);
+    $response = $this->ci->view->render($response, "home/index.phtml", ["router" => $this->ci->router, "response" => $response]);
     return $response;
 
   }

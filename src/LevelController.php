@@ -19,7 +19,7 @@ class LevelController {
 
     $levels = $this->ci->db->select('level', '*');
 
-    $response = $this->ci->view->render($response, 'levels/index.phtml', ['router' => $this->ci->router, 'levels' => $levels]);
+    $response = $this->ci->view->render($response, 'levels/index.phtml', ['router' => $this->ci->router, 'levels' => $levels, 'response' => $response]);
     return $response;
   }
 

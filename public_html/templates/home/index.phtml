@@ -1,33 +1,15 @@
-<!doctype html>
-<html>
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<?php $this->render($response, 'includes/.header.phtml', ['title' => 'MarioMaker Tracker', 'subtitle' => 'Home']); ?>
 
-    <title>MarioMaker Tracking</title>
+  <div class="splash-container">
+    <div class="splash">
+      <h1 class="splash-head">Mario Maker <br>Tracker</h1>
+      <p class="splash-subhead">
+        Track it like it's hot.
+      </p>
+      <p>
+        <a href="<?= $router->pathFor('levels') ?>" class="pure-button pure-button-primary">Levels</a>
+      </p>
+    </div>
+  </div>
 
-    <link rel="stylesheet" href="http://yui.yahooapis.com/pure/0.6.0/pure-min.css">
-</head>
-
-<body>
-    <!--
-    Your HTML goes here. Visit purecss.io/layouts/ for some sample HTML code.
-    -->
-
-    <h1>Home</h1>
-
-    <!--
-      add iteration over existing levels in the system, with links on each to scrape, parse, or view.
-      - scrape downloads the current html from its web page
-      - parse creates a snapshot of data based on the latest scrape for that level
-      - view displays the latest snapshot of data for the level
-    -->
-
-    <h2>Sections</h2>
-    <ul>
-      <li><a href="<?= $router->pathFor('levels') ?>">Levels</a></li>
-      <li><a href="<?= /*$router->pathFor('levels')*/'' ?>">Players</a></li>
-    </ul>
-
-</body>
-</html>
+<?php $this->render($response, "includes/.footer.phtml", []); ?>

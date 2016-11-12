@@ -69,41 +69,6 @@ $container['view'] = new \Slim\Views\PhpRenderer("./templates/");
 $homeController = $pkg . 'HomeController';
 $app->get('/', $homeController . ':index')->setName('home');
 
-$app->get('/validate', function(Request $request, Response $response, $args) {
-
-  if ( array_key_exists('level_code', $request->getQueryParams()) )
-    $levelCode = $request->getQueryParams()['level_code'];
-  else
-    return $response->withStatus(404);
-
-  $levelHelper = new \KevinBigler\MM\Helper\LevelHelper($this);
-  $levelHelper->isValid($levelCode);
-  // if ( $levelHelper->isValid($levelCode) )
-  //   return $response->withRedirect('/levels/' . $levelCode);
-
-  // TODO return view for invalid level
-  // echo 'the level is invalid';
-});
-
-$app->get('/find', function(Request $request, Response $response, $args) {
-
-  if ( array_key_exists('level_code', $request->getQueryParams()) )
-    $levelCode = $request->getQueryParams()['level_code'];
-  else
-    return $response->withStatus(404);
-
-  $levelHelper = new \KevinBigler\MM\Helper\LevelHelper($this);
-  if ( ! $levelHelper->isValid($levelCode) )
-    return $response->withRedirect('/validate?level_code=' . $levelCode);
-
-  $foundLevel = $this->db->has('level', ['level_code' => $levelCode]);
-
-  if ($foundLevel)
-    echo $levelCode . ' - Level was found!';
-  else
-    echo $levelCode . ' - Level was not found. :(';
-});
-
 // -----------------------------------------------------------------------------
 // Levels
 // -----------------------------------------------------------------------------
@@ -111,6 +76,9 @@ $levelController = $pkg . 'LevelController';
 $app->get('/levels', $levelController . ':index')->setName('levels');
 $app->get('/levels/invalid', $levelController . ':invalid')->setName('invalid-level');
 $app->get('/levels/not-found', $levelController . ':notFound')->setName('level-not-found');
+$app->get('/levels/add', $levelController . ':add')->setName('add-level');
+$app->get('/levels/nintendo-not-found', $levelController . ':nintendoNotFound')->setName('level-nintendo-not-found');
+$app->get('/levels/add-error', $levelController . ':addError')->setName('level-add-error');
 $app->get('/levels/takeSnapshots', $levelController . ':takeSnapshots')->setName('take-snapshots-levels');
 
 // {level_code} can have this regex: [0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}

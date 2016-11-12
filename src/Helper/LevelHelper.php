@@ -33,7 +33,7 @@ class LevelHelper {
     return $scrapeId;
   }
 
-  public function parse($levelCode, $scrapeId = 0) {
+  public function getLatestLevelScrape($levelCode, $scrapeId = 0) {
     $latestScrapes = [];
 
     if ( $scrapeId > 0 ) {
@@ -57,16 +57,23 @@ class LevelHelper {
 
     // die($this->ci->db->last_query());
 
+    if ($latestScrapes && is_array($latestScrapes) && count($latestScrapes) > 0)
+      return $latestScrapes[0];
+
+    return null;
+  }
+
+  public function parse($levelCode, $scrapeId = 0) {
+    $latestScrape = $this->getLatestLevelScrape($levelCode, $scrapeId);
+
     $foundScrape = false;
 
-    if ($latestScrapes && is_array($latestScrapes) && count($latestScrapes) > 0) {
+    if ($latestScrape !== null) {
       $foundScrape = true;
-      $latestScrape = $latestScrapes[0];
-
       $html = $latestScrape['html'];
 
-      $levelParser = new MM\LevelParser();
-      $modelHelper = new MM\Helper\ModelHelper();
+      $levelParser = new \KevinBigler\MM\LevelParser();
+      $modelHelper = new ModelHelper();
 
       if ( ! $this->ci->db->has('level', [ 'level_code' => $levelCode ]) ) {
         $level = $levelParser->parseLevelData($html);
@@ -98,6 +105,33 @@ class LevelHelper {
     }
 
     return $foundScrape;
+  }
+
+  public function takeSnapshot($levelCode) {
+    $scrapeId = $this->scrape($levelCode);
+    $foundScrape = $this->parse($levelCode, $scrapeId);
+
+    return $this->select($levelCode);
+  }
+
+  /**
+    Add a level into the system from Nintendo's website.
+    @param - $levelCode
+    @return - <pre>
+      1. Level associative array if level found on Nintendo's website (response 200),
+      2. false if level not found on Nintendo's website (response is not 200),
+      3. null if error occurred while trying to parse the level
+  */
+  public function add($levelCode) {
+    $scrapeId = $this->scrape($levelCode);
+    $scrape = $this->getLatestLevelScrape($levelCode, $scrapeId);
+
+    if ($scrape['response_code'] === '200') {
+      $this->parse($levelCode, $scrapeId);
+      return $this->select($levelCode);
+    }
+
+    return false;
   }
 
   public function select($levelCode) {

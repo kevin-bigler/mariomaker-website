@@ -21,7 +21,7 @@ class LevelController {
 
     $levels = $this->ci->db->select('level', '*');
 
-    $response = $this->ci->view->render($response, 'levels/index.phtml', ['router' => $this->ci->router, 'levels' => $levels, 'response' => $response]);
+    $response = $this->ci->view->render($response, 'includes/.layout.phtml', ['page' => 'levels/index.phtml', 'page' => 'levels/index.phtml', 'router' => $this->ci->router, 'levels' => $levels, 'response' => $response]);
     return $response;
   }
 
@@ -35,7 +35,7 @@ class LevelController {
       return $response->withRedirect('/levels/not-found?level_code=' . $levelCode);
 
     $level = $this->levelHelper->select($levelCode);
-    $response = $this->ci->view->render($response, 'levels/detail.phtml', ['router' => $this->ci->router, 'level_code' => $levelCode, 'level' => $level, 'response' => $response]);
+    $response = $this->ci->view->render($response, 'includes/.layout.phtml', ['page' => 'levels/detail.phtml', 'router' => $this->ci->router, 'level_code' => $levelCode, 'level' => $level, 'response' => $response]);
     return $response;
   }
 
@@ -52,7 +52,7 @@ class LevelController {
         return $response->withRedirect('/levels/not-found?level_code=' . $levelCode);
     }
 
-    $response = $this->ci->view->render($response, 'levels/invalid.phtml', ['router' => $this->ci->router, 'level_code' => $levelCode, 'response' => $response]);
+    $response = $this->ci->view->render($response, 'includes/.layout.phtml', ['page' => 'levels/invalid.phtml', 'router' => $this->ci->router, 'level_code' => $levelCode, 'response' => $response]);
     return $response;
   }
 
@@ -68,7 +68,62 @@ class LevelController {
     if ( $this->levelHelper->isFound($levelCode) )
       return $response->withRedirect( $this->ci->router->pathFor('level', ['level_code' =>$levelCode]) );
 
-    $response = $this->ci->view->render($response, 'levels/not-found.phtml', ['router' => $this->ci->router, 'level_code' => $levelCode, 'response' => $response]);
+    $response = $this->ci->view->render($response, 'includes/.layout.phtml', ['page' => 'levels/not-found.phtml', 'router' => $this->ci->router, 'level_code' => $levelCode, 'response' => $response]);
+    return $response;
+  }
+
+  public function add(Request $request, Response $response, $args) {
+    if ( ! array_key_exists('level_code', $request->getQueryParams()) )
+      return $response->withStatus(404);
+
+    $levelCode = $request->getQueryParams()['level_code'];
+
+    if ( ! $this->levelHelper->isValid($levelCode) )
+      return $response->withRedirect('/levels/invalid?level_code=' . $levelCode);
+
+    if ( $this->levelHelper->isFound($levelCode) )
+      return $response->withRedirect( $this->ci->router->pathFor('level', ['level_code' =>$levelCode]) );
+
+    $level = $this->levelHelper->add($levelCode);
+
+    if ($level === false) {
+      return $response->withRedirect('/levels/nintendo-not-found?level_code=' . $levelCode);
+    } else if ($level === null) {
+      return $response->withRedirect('/levels/add-error?level_code=' . $levelCode);
+    } else {
+      return $response->withRedirect( $this->ci->router->pathFor('level', ['level_code' =>$levelCode]) );
+    }
+  }
+
+  public function nintendoNotFound(Request $request, Response $response, $args) {
+    if ( ! array_key_exists('level_code', $request->getQueryParams()) )
+      return $response->withStatus(404);
+
+    $levelCode = $request->getQueryParams()['level_code'];
+
+    if ( ! $this->levelHelper->isValid($levelCode) )
+      return $response->withRedirect('/levels/invalid?level_code=' . $levelCode);
+
+    if ( $this->levelHelper->isFound($levelCode) )
+      return $response->withRedirect( $this->ci->router->pathFor('level', ['level_code' =>$levelCode]) );
+
+    $response = $this->ci->view->render($response, 'includes/.layout.phtml', ['page' => 'levels/nintendo-not-found.phtml', 'router' => $this->ci->router, 'level_code' => $levelCode, 'response' => $response]);
+    return $response;
+  }
+
+  public function addError(Request $request, Response $response, $args) {
+    if ( ! array_key_exists('level_code', $request->getQueryParams()) )
+      return $response->withStatus(404);
+
+    $levelCode = $request->getQueryParams()['level_code'];
+
+    if ( ! $this->levelHelper->isValid($levelCode) )
+      return $response->withRedirect('/levels/invalid?level_code=' . $levelCode);
+
+    if ( $this->levelHelper->isFound($levelCode) )
+      return $response->withRedirect( $this->ci->router->pathFor('level', ['level_code' =>$levelCode]) );
+
+    $response = $this->ci->view->render($response, 'includes/.layout.phtml', ['page' => 'levels/add-error.phtml', 'router' => $this->ci->router, 'level_code' => $levelCode, 'response' => $response]);
     return $response;
   }
 
@@ -81,12 +136,9 @@ class LevelController {
   public function takeSnapshot(Request $request, Response $response, $args) {
     $levelCode = $args['level_code'];
 
-    $scrapeId = $this->levelHelper->scrape($levelCode);
-    $foundScrape = $this->levelHelper->parse($levelCode);
+    $level = $this->levelHelper->takeSnapshot($levelCode);
 
-    $level = $this->levelHelper->select($level);
-
-    $response = $this->ci->view->render($response, 'levels/take-snapshot.phtml', ['router' => $this->ci->router, 'level_code' => $levelCode, 'found_scrape' => $foundScrape, 'level' => $level, 'response' => $response]);
+    $response = $this->ci->view->render($response, 'includes/.layout.phtml', ['page' => 'levels/take-snapshot.phtml', 'router' => $this->ci->router, 'level_code' => $levelCode, 'found_scrape' => $foundScrape, 'level' => $level, 'response' => $response]);
     return $response;
   }
 
@@ -95,7 +147,7 @@ class LevelController {
 
     $scrapeId = $this->levelHelper->scrape($levelCode);
 
-    $response = $this->ci->view->render($response, 'levels/scrape.phtml', ['router' => $this->ci->router, 'level_code' => $levelCode, 'response' => $response]);
+    $response = $this->ci->view->render($response, 'includes/.layout.phtml', ['page' => 'levels/scrape.phtml', 'router' => $this->ci->router, 'level_code' => $levelCode, 'response' => $response]);
     return $response;
   }
 
@@ -104,7 +156,7 @@ class LevelController {
 
     $foundScrape = $this->levelHelper->parse($levelCode);
 
-    $response = $this->ci->view->render($response, 'levels/parse.phtml', ['router' => $this->ci->router, 'level_code' => $levelCode, 'found_scrape' => $foundScrape, 'response' => $response]);
+    $response = $this->ci->view->render($response, 'includes/.layout.phtml', ['page' => 'levels/parse.phtml', 'router' => $this->ci->router, 'level_code' => $levelCode, 'found_scrape' => $foundScrape, 'response' => $response]);
     return $response;
   }
 
@@ -120,7 +172,7 @@ class LevelController {
       'LIMIT' => 1
     ]); // TODO join level_snapshot
 
-    $response = $this->ci->view->render($response, 'levels/parse.phtml', ['router' => $this->ci->router, 'level_code' => $levelCode, 'scrapes' => $scrapes, 'response' => $response]);
+    $response = $this->ci->view->render($response, 'includes/.layout.phtml', ['page' => 'levels/scrapes.phtml', 'router' => $this->ci->router, 'level_code' => $levelCode, 'scrapes' => $scrapes, 'response' => $response]);
     return $response;
   }
 
@@ -136,7 +188,7 @@ class LevelController {
       'LIMIT' => 1
     ]); // TODO join page_scrape
 
-    $response = $this->ci->view->render($response, 'levels/parse.phtml', ['router' => $this->ci->router, 'level_code' => $levelCode, 'snapshots' => $snapshots, 'response' => $response]);
+    $response = $this->ci->view->render($response, 'includes/.layout.phtml', ['page' => 'levels/snapshots.phtml', 'router' => $this->ci->router, 'level_code' => $levelCode, 'snapshots' => $snapshots, 'response' => $response]);
     return $response;
   }
 }

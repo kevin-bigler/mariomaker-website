@@ -1,15 +1,18 @@
-<?php $this->render($response, 'includes/.header.phtml', ['subtitle' => 'Level Not Found']); ?>
+
+<div class="pure-g">
+  <div class="pure-u-1">
+    <h1>Level not found: <?= $level_code ?></h1>
+    <div class=" pure-menu pure-menu-horizontal">
+      <ul class="pure-menu-list">
+        <li class="pure-menu-item"><a href="<?= $router->pathFor('add-level', [], ['level_code' => $level_code]) ?>" class="pure-menu-link">Add</a></li>
+        <li class="pure-menu-item"><a href="<?= $router->pathFor('levels') ?>" class="pure-menu-link">All Levels</a></li>
+      </ul>
+    </div>
+  </div>
+</div>
 
 
-<!-- page-content -->
-Level not found: <?= $level_code ?>
-
-
-
-<?php $this->render($response, "includes/.footer-scripts.phtml", []); ?>
 
 <!-- page-specific javascript -->
 
 
-
-<?php $this->render($response, "includes/.footer.phtml", []); ?>

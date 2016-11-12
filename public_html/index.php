@@ -109,6 +109,8 @@ $app->get('/find', function(Request $request, Response $response, $args) {
 // -----------------------------------------------------------------------------
 $levelController = $pkg . 'LevelController';
 $app->get('/levels', $levelController . ':index')->setName('levels');
+$app->get('/levels/invalid', $levelController . ':invalid')->setName('invalid-level');
+$app->get('/levels/not-found', $levelController . ':notFound')->setName('level-not-found');
 $app->get('/levels/takeSnapshots', $levelController . ':takeSnapshots')->setName('take-snapshots-levels');
 
 // {level_code} can have this regex: [0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}

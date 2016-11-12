@@ -9,10 +9,12 @@ use \Interop\Container\ContainerInterface as ContainerInterface;
 class LevelController {
 
   protected $ci;
+  protected $levelHelper;
 
   //Constructor
   public function __construct(ContainerInterface $ci) {
     $this->ci = $ci;
+    $this->levelHelper = new Helper\LevelHelper($ci);
   }
 
   public function index(Request $request, Response $response, $args) {
@@ -23,55 +25,86 @@ class LevelController {
     return $response;
   }
 
+  public function detail(Request $request, Response $response, $args) {
+    $levelCode = $args['level_code'];
+
+    if ( ! $this->levelHelper->isValid($levelCode) )
+      return $response->withRedirect('/levels/invalid?level_code=' . $levelCode);
+
+    if ( ! $this->levelHelper->isFound($levelCode) )
+      return $response->withRedirect('/levels/not-found?level_code=' . $levelCode);
+
+    $level = $this->levelHelper->select($levelCode);
+    $response = $this->ci->view->render($response, 'levels/detail.phtml', ['router' => $this->ci->router, 'level_code' => $levelCode, 'level' => $level, 'response' => $response]);
+    return $response;
+  }
+
+  public function invalid(Request $request, Response $response, $args) {
+    if ( ! array_key_exists('level_code', $request->getQueryParams()) )
+      return $response->withStatus(404);
+
+    $levelCode = $request->getQueryParams()['level_code'];
+
+    if ( $this->levelHelper->isValid($levelCode) ) {
+      if ( $this->levelHelper->isFound($levelCode) )
+        return $response->withRedirect( $this->ci->router->pathFor('level', ['level_code' =>$levelCode]) );
+      else
+        return $response->withRedirect('/levels/not-found?level_code=' . $levelCode);
+    }
+
+    $response = $this->ci->view->render($response, 'levels/invalid.phtml', ['router' => $this->ci->router, 'level_code' => $levelCode, 'response' => $response]);
+    return $response;
+  }
+
+  public function notFound(Request $request, Response $response, $args) {
+    if ( ! array_key_exists('level_code', $request->getQueryParams()) )
+      return $response->withStatus(404);
+
+    $levelCode = $request->getQueryParams()['level_code'];
+
+    if ( ! $this->levelHelper->isValid($levelCode) )
+      return $response->withRedirect('/levels/invalid?level_code=' . $levelCode);
+
+    if ( $this->levelHelper->isFound($levelCode) )
+      return $response->withRedirect( $this->ci->router->pathFor('level', ['level_code' =>$levelCode]) );
+
+    $response = $this->ci->view->render($response, 'levels/not-found.phtml', ['router' => $this->ci->router, 'level_code' => $levelCode, 'response' => $response]);
+    return $response;
+  }
+
   public function takeSnapshots(Request $request, Response $response, $args) {
     $levelCode = $args['level_code'];
     // TODO
     // find all levels with track = 1, then snapshot each of them
   }
 
-  public function detail(Request $request, Response $response, $args) {
+  public function takeSnapshot(Request $request, Response $response, $args) {
     $levelCode = $args['level_code'];
 
-    $levelHelper = new Helper\LevelHelper($this->ci);
+    $scrapeId = $this->levelHelper->scrape($levelCode);
+    $foundScrape = $this->levelHelper->parse($levelCode);
 
-    if ( ! $levelHelper->isValid($levelCode) )
-      return $response->withRedirect('/invalid?level_code=' . $levelCode);
-      
-    $level = $levelHelper->select($levelCode);
-    $response = $this->ci->view->render($response, 'levels/detail.phtml', ['router' => $this->ci->router, 'level_code' => $levelCode, 'level' => $level]);
+    $level = $this->levelHelper->select($level);
+
+    $response = $this->ci->view->render($response, 'levels/take-snapshot.phtml', ['router' => $this->ci->router, 'level_code' => $levelCode, 'found_scrape' => $foundScrape, 'level' => $level, 'response' => $response]);
     return $response;
   }
 
   public function scrape(Request $request, Response $response, $args) {
     $levelCode = $args['level_code'];
 
-    $levelHelper = new Helper\LevelHelper($this->ci);
-    $scrapeId = $levelHelper->scrape($levelCode);
+    $scrapeId = $this->levelHelper->scrape($levelCode);
 
-    $response = $this->ci->view->render($response, 'levels/scrape.phtml', ['router' => $this->ci->router, 'level_code' => $levelCode]);
+    $response = $this->ci->view->render($response, 'levels/scrape.phtml', ['router' => $this->ci->router, 'level_code' => $levelCode, 'response' => $response]);
     return $response;
   }
 
   public function parse(Request $request, Response $response, $args) {
     $levelCode = $args['level_code'];
 
-    $levelHelper = new Helper\LevelHelper($this->ci);
-    $foundScrape = $levelHelper->parse($levelCode);
+    $foundScrape = $this->levelHelper->parse($levelCode);
 
-    $response = $this->ci->view->render($response, 'levels/parse.phtml', ['router' => $this->ci->router, 'level_code' => $levelCode, 'found_scrape' => $foundScrape]);
-    return $response;
-  }
-
-  public function takeSnapshot(Request $request, Response $response, $args) {
-    $levelCode = $args['level_code'];
-
-    $levelHelper = new Helper\LevelHelper($this->ci);
-    $scrapeId = $levelHelper->scrape($levelCode);
-    $foundScrape = $levelHelper->parse($levelCode);
-
-    $level = $levelHelper->select($level);
-
-    $response = $this->ci->view->render($response, 'levels/take-snapshot.phtml', ['router' => $this->ci->router, 'level_code' => $levelCode, 'found_scrape' => $foundScrape, 'level' => $level]);
+    $response = $this->ci->view->render($response, 'levels/parse.phtml', ['router' => $this->ci->router, 'level_code' => $levelCode, 'found_scrape' => $foundScrape, 'response' => $response]);
     return $response;
   }
 
@@ -87,7 +120,7 @@ class LevelController {
       'LIMIT' => 1
     ]); // TODO join level_snapshot
 
-    $response = $this->ci->view->render($response, 'levels/parse.phtml', ['router' => $this->ci->router, 'level_code' => $levelCode, 'scrapes' => $scrapes]);
+    $response = $this->ci->view->render($response, 'levels/parse.phtml', ['router' => $this->ci->router, 'level_code' => $levelCode, 'scrapes' => $scrapes, 'response' => $response]);
     return $response;
   }
 
@@ -103,7 +136,7 @@ class LevelController {
       'LIMIT' => 1
     ]); // TODO join page_scrape
 
-    $response = $this->ci->view->render($response, 'levels/parse.phtml', ['router' => $this->ci->router, 'level_code' => $levelCode, 'snapshots' => $snapshots]);
+    $response = $this->ci->view->render($response, 'levels/parse.phtml', ['router' => $this->ci->router, 'level_code' => $levelCode, 'snapshots' => $snapshots, 'response' => $response]);
     return $response;
   }
 }

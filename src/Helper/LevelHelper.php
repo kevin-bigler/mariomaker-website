@@ -103,21 +103,30 @@ class LevelHelper {
   public function select($levelCode) {
     // level and level_snapshot (latest) joined
     // TODO specific columns from both tables
+    $results = $this->ci->db->select('level', '*', ['level_code' => $levelCode]);
+    if ($results && count($results) > 0)
+      return $results[0];
+    else
+      return null;
   }
 
   public function isValid($levelCode) {
     $regex = '/^[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}$/';
     $result = preg_match($regex, $levelCode);
 
-    if ($result === 1) {
-      echo $levelCode . ' is valid!';
-    } else if ($result === 0) {
-      echo $levelCode . ' is invalid :(';
-    } else if ($result === false) {
-      echo 'an error occurred x_x';
-    } else {
-      echo 'I have no clue what happened... o_o';
-    }
+    // if ($result === 1) {
+    //   echo $levelCode . ' is valid!';
+    // } else if ($result === 0) {
+    //   echo $levelCode . ' is invalid :(';
+    // } else if ($result === false) {
+    //   echo 'an error occurred x_x';
+    // } else {
+    //   echo 'I have no clue what happened... o_o';
+    // }
     return $result === 1;
+  }
+
+  public function isFound($levelCode) {
+    return $this->ci->db->has('level', ['level_code' => $levelCode]);
   }
 }

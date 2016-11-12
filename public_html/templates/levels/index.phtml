@@ -32,16 +32,18 @@
       <hr>
       <div class="pure-g">
         <div class="pure-u-1-4" style="padding:10px;">
-          <img src="<?= $level['image_url'] ?>" class="pure-img" style="margin-top:10px;">
+          <a href="<?= $router->pathFor('level', ['level_code' => $level['level_code']]) ?>">
+            <img src="<?= $level['image_url'] ?>" class="pure-img" style="margin-top:10px;">
+          </a>
         </div>
         <div class="pure-u-3-4" style="padding:10px;">
-          <h3><?= $level['title'] ?></h3>
+          <h3><a href="<?= $router->pathFor('level', ['level_code' => $level['level_code']]) ?>"><?= $level['title'] ?></a></h3>
           <input type="text" value="<?= $level['level_code'] ?>" class="pure-input" style="width:auto;" readonly>
           <div class=" pure-menu pure-menu-horizontal">
             <ul class="pure-menu-list">
               <!-- <li><a target="_blank" href="<?=$router->pathFor('scrape-level', ['level_code' => $level['level_code']])?>">Scrape</a></li> -->
               <!-- <li><a target="_blank" href="<?=$router->pathFor('parse-level', ['level_code' => $level['level_code']])?>">Parse</a></li> -->
-              <li class="pure-menu-item"><a href="<?=/*$router->pathFor('view-level', [])*/''?>" class="pure-menu-link">View</a></li>
+              <li class="pure-menu-item"><a href="<?= $router->pathFor('level', ['level_code' => $level['level_code']]) ?>" class="pure-menu-link">View</a></li>
             </ul>
           </div>
         </div>

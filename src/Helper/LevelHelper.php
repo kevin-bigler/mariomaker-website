@@ -104,4 +104,20 @@ class LevelHelper {
     // level and level_snapshot (latest) joined
     // TODO specific columns from both tables
   }
+
+  public function isValid($levelCode) {
+    $regex = '/^[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}$/';
+    $result = preg_match($regex, $levelCode);
+
+    if ($result === 1) {
+      echo $levelCode . ' is valid!';
+    } else if ($result === 0) {
+      echo $levelCode . ' is invalid :(';
+    } else if ($result === false) {
+      echo 'an error occurred x_x';
+    } else {
+      echo 'I have no clue what happened... o_o';
+    }
+    return $result === 1;
+  }
 }

@@ -32,7 +32,7 @@ class LevelController {
   public function detail(Request $request, Response $response, $args) {
     $levelCode = $args['level_code'];
 
-    $levelHelper = new MM\Helper\LevelHelper();
+    $levelHelper = new MM\Helper\LevelHelper($this->ci);
     $level = $levelHelper->select($levelCode);
 
     $response = $this->ci->view->render($response, 'levels/scrape.phtml', ['router' => $this->ci->router, 'level_code' => $levelCode, 'level' => $level]);
@@ -42,7 +42,7 @@ class LevelController {
   public function scrape(Request $request, Response $response, $args) {
     $levelCode = $args['level_code'];
 
-    $levelHelper = new MM\Helper\LevelHelper();
+    $levelHelper = new MM\Helper\LevelHelper($this->ci);
     $scrapeId = $levelHelper->scrape($levelCode);
 
     $response = $this->ci->view->render($response, 'levels/scrape.phtml', ['router' => $this->ci->router, 'level_code' => $levelCode]);
@@ -52,7 +52,7 @@ class LevelController {
   public function parse(Request $request, Response $response, $args) {
     $levelCode = $args['level_code'];
 
-    $levelHelper = new MM\Helper\LevelHelper();
+    $levelHelper = new MM\Helper\LevelHelper($this->ci);
     $foundScrape = $levelHelper->parse($levelCode);
 
     $response = $this->ci->view->render($response, 'levels/parse.phtml', ['router' => $this->ci->router, 'level_code' => $levelCode, 'found_scrape' => $foundScrape]);
@@ -62,7 +62,7 @@ class LevelController {
   public function takeSnapshot(Request $request, Response $response, $args) {
     $levelCode = $args['level_code'];
 
-    $levelHelper = new MM\Helper\LevelHelper();
+    $levelHelper = new MM\Helper\LevelHelper($this->ci);
     $scrapeId = $levelHelper->scrape($levelCode);
     $foundScrape = $levelHelper->parse($levelCode);
 

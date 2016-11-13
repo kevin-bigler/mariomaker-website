@@ -171,4 +171,12 @@ class LevelHelper {
   public function imageUrlForGameskin($gameskin) {
     return '/lib/img/gameskin_' . strtolower($gameskin) . '.png';
   }
+
+  public function track($levelCode) {
+    return $this->ci->db->update('level', ['track' => 1], ['level_code' => $levelCode]);
+  }
+
+  public function untrack($levelCode) {
+    return $this->ci->db->update('level', ['track' => 0], ['level_code' => $levelCode]);
+  }
 }

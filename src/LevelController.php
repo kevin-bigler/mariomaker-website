@@ -35,7 +35,9 @@ class LevelController {
       return $response->withRedirect('/levels/not-found?level_code=' . $levelCode);
 
     $level = $this->levelHelper->select($levelCode);
-    $response = $this->ci->view->render($response, 'includes/.layout.phtml', ['page' => 'levels/detail.phtml', 'router' => $this->ci->router, 'level_code' => $levelCode, 'level' => $level, 'response' => $response]);
+    $page = $level['track'] ? 'levels/detail.phtml' : 'levels/detail-basic.phtml';
+
+    $response = $this->ci->view->render($response, 'includes/.layout.phtml', ['page' => $page, 'router' => $this->ci->router, 'level_code' => $levelCode, 'level' => $level, 'response' => $response]);
     return $response;
   }
 
@@ -130,21 +132,56 @@ class LevelController {
   public function track(Request $request, Response $response, $args) {
     $levelCode = $args['level_code'];
 
-    // TODO set track to 0 or 1 here, redirect to detail
+    if ( ! $this->levelHelper->isValid($levelCode) )
+      return $response->withRedirect('/levels/invalid?level_code=' . $levelCode);
+
+    if ( ! $this->levelHelper->isFound($levelCode) )
+      return $response->withRedirect('/levels/not-found?level_code=' . $levelCode);
+
+    $numAffectedRows = $this->levelHelper->track($levelCode);
+    // die('tracking affected ' . $numAffectedRows . ' rows');
+
+    return $response->withRedirect( $this->ci->router->pathFor('level', ['level_code' =>$levelCode]) );
+  }
+
+  public function untrack(Request $request, Response $response, $args) {
+    $levelCode = $args['level_code'];
+
+    if ( ! $this->levelHelper->isValid($levelCode) )
+      return $response->withRedirect('/levels/invalid?level_code=' . $levelCode);
+
+    if ( ! $this->levelHelper->isFound($levelCode) )
+      return $response->withRedirect('/levels/not-found?level_code=' . $levelCode);
+
+    $this->levelHelper->untrack($levelCode);
+
+    return $response->withRedirect( $this->ci->router->pathFor('level', ['level_code' =>$levelCode]) );
   }
 
   public function takeSnapshots(Request $request, Response $response, $args) {
-    $levelCode = $args['level_code'];
-    // TODO
     // find all levels with track = 1, then snapshot each of them
+    $trackedLevels = $this->ci->db->select('level', '*', ['track' => 1]);
+
+    foreach($trackedLevels as $level) {
+      $this->levelHelper->takeSnapshot($level['level_code']);
+    }
+
+    $response = $this->ci->view->render($response, 'includes/.layout.phtml', ['page' => 'levels/take-snapshots.phtml', 'router' => $this->ci->router, 'tracked_levels' => $trackedLevels, 'response' => $response]);
+    return $response;
   }
 
   public function takeSnapshot(Request $request, Response $response, $args) {
     $levelCode = $args['level_code'];
 
+    if ( ! $this->levelHelper->isValid($levelCode) )
+      return $response->withRedirect('/levels/invalid?level_code=' . $levelCode);
+
+    if ( ! $this->levelHelper->isFound($levelCode) )
+      return $response->withRedirect('/levels/not-found?level_code=' . $levelCode);
+
     $level = $this->levelHelper->takeSnapshot($levelCode);
 
-    $response = $this->ci->view->render($response, 'includes/.layout.phtml', ['page' => 'levels/take-snapshot.phtml', 'router' => $this->ci->router, 'level_code' => $levelCode, 'found_scrape' => $foundScrape, 'level' => $level, 'response' => $response]);
+    $response = $this->ci->view->render($response, 'includes/.layout.phtml', ['page' => 'levels/take-snapshot.phtml', 'router' => $this->ci->router, 'level_code' => $levelCode, 'level' => $level, 'response' => $response]);
     return $response;
   }
 

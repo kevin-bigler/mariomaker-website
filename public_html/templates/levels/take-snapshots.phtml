@@ -1,0 +1,8 @@
+
+
+    <h1>Take Snapshot of All Levels:</h1>
+    <ul>
+      <?php foreach ($tracked_levels as $level) { ?>
+        <li><a href="<?= $router->pathFor('level', ['level_code' => $level['level_code']]) ?>"><?= $level['title'] ?></a></li>
+      <?php } ?>
+    </ul>

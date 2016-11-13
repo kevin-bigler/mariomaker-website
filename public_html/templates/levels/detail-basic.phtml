@@ -1,6 +1,6 @@
 
 
-Level details for <?= $level['title'] ?>
+Level details (basic) for <?= $level['title'] ?>
 <pre>
 <?= $level['title'] ?>
 <br><?= $level['level_code'] ?>
@@ -10,14 +10,7 @@ Level details for <?= $level['title'] ?>
 <br><img src="<?= $level['image_full_url'] ?>">
 <br><img src="<?= $level['gameskin_image_url'] ?>">
 <br><a href="<?= $level['miiverse_comments_url'] ?>">Miiverse Comments</a>
-<br><a class="pure-button" href="<?= $router->pathFor('untrack-level', ['level_code' => $level['level_code']]) ?>">Stop Tracking</a>
-<br>
-<br>
-<br>
-<br><a class="pure-button" href="<?= $router->pathFor('take-snapshot-level', ['level_code' => $level['level_code']]) ?>">Take Snapshot</a>
-<br>
-<br>
-<br>
+<br><a class="pure-button" href="<?= $router->pathFor('track-level', ['level_code' => $level['level_code']]) ?>">Begin Tracking</a>
 
 <?php
   // echo '<pre>';

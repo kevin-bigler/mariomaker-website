@@ -36,6 +36,7 @@ CREATE TABLE `level` (
   `image_full_url` text DEFAULT NULL,
   `upload_date` date DEFAULT NULL,
   `gameskin` text DEFAULT NULL, -- mode (SMB1, SMB2, SMW, NSMB)
+  `miiverse_comments_url` text DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `level_code` (`level_code`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;

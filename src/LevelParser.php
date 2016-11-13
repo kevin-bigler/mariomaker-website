@@ -42,6 +42,7 @@ class LevelParser {
       `image_full_url` text DEFAULT NULL,
       `upload_date` date DEFAULT NULL,
       `gameskin` text DEFAULT NULL, -- mode (SMB1, SMB2, SMW, NSMB)
+      `miiverse_comments_url` text DEFAULT NULL,
     */
 
     $dom = new Dom;
@@ -72,6 +73,9 @@ class LevelParser {
     // gameskin
     // -- mode (SMB1, SMB2, SMW, NSMB)
     $level->gameskin = $this->getGameskin($dom);
+
+    // image_full_url
+    $level->miiverseCommentsUrl = $this->domParseHelper->firstElementAttribute( $dom->find('.course-detail-wrapper a.miiverse'), 'href' );
 
     // echo 'level:<pre>';
     // print_r($level);

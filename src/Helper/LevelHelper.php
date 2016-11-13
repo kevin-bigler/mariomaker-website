@@ -138,10 +138,14 @@ class LevelHelper {
     // level and level_snapshot (latest) joined
     // TODO specific columns from both tables
     $results = $this->ci->db->select('level', '*', ['level_code' => $levelCode]);
-    if ($results && count($results) > 0)
-      return $results[0];
-    else
+    if ( ! $results || count($results) < 1)
       return null;
+
+    $level = $results[0];
+    $level['gameskin_image_url'] = $this->imageUrlForGameskin($level['gameskin']);
+    $level['player_info'] = json_decode($level['player_info']);
+
+    return $level;
   }
 
   public function isValid($levelCode) {
@@ -162,5 +166,9 @@ class LevelHelper {
 
   public function isFound($levelCode) {
     return $this->ci->db->has('level', ['level_code' => $levelCode]);
+  }
+
+  public function imageUrlForGameskin($gameskin) {
+    return '/lib/img/gameskin_' . strtolower($gameskin) . '.png';
   }
 }

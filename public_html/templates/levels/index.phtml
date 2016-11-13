@@ -40,9 +40,7 @@
           <input type="text" value="<?= $level['level_code'] ?>" class="pure-input" style="width:auto;" readonly>
           <div class=" pure-menu pure-menu-horizontal">
             <ul class="pure-menu-list">
-              <!-- <li><a target="_blank" href="<?=$router->pathFor('scrape-level', ['level_code' => $level['level_code']])?>">Scrape</a></li> -->
-              <!-- <li><a target="_blank" href="<?=$router->pathFor('parse-level', ['level_code' => $level['level_code']])?>">Parse</a></li> -->
-              <li class="pure-menu-item"><a href="<?= $router->pathFor('level', ['level_code' => $level['level_code']]) ?>" class="pure-menu-link">View</a></li>
+              <li class="pure-menu-item"><a href="<?= $router->pathFor('level', ['level_code' => $level['level_code']]) ?>" class="pure-menu-link pure-button pure-button-primary">View</a></li>
             </ul>
           </div>
         </div>

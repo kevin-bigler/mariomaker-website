@@ -127,6 +127,12 @@ class LevelController {
     return $response;
   }
 
+  public function track(Request $request, Response $response, $args) {
+    $levelCode = $args['level_code'];
+
+    // TODO set track to 0 or 1 here, redirect to detail
+  }
+
   public function takeSnapshots(Request $request, Response $response, $args) {
     $levelCode = $args['level_code'];
     // TODO

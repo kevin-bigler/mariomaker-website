@@ -1,11 +1,20 @@
 
 
 Level details for <?= $level['title'] ?>
+<pre>
+<?= $level['title'] ?>
+<br><?= $level['level_code'] ?>
+<br><?= $level['upload_date'] ?>
+<br><?php print_r($level['player_info']) ?>
+<br><img src="<?= $level['image_url'] ?>">
+<br><img src="<?= $level['image_full_url'] ?>">
+<br><img src="<?= $level['gameskin_image_url'] ?>">
+<br><?= $level['track'] ? 'Tracking' : 'Not Tracking' ?>
 
 <?php
-  // echo '<pre>';
-  // print_r($level);
-  // die();
+  echo '<pre>';
+  print_r($level);
+  die();
  ?>
 
 

@@ -79,6 +79,7 @@ $app->get('/levels/not-found', $levelController . ':notFound')->setName('level-n
 $app->get('/levels/add', $levelController . ':add')->setName('add-level');
 $app->get('/levels/nintendo-not-found', $levelController . ':nintendoNotFound')->setName('level-nintendo-not-found');
 $app->get('/levels/add-error', $levelController . ':addError')->setName('level-add-error');
+$app->get('/levels/track', $levelController . ':track')->setName('track-level');
 $app->get('/levels/takeSnapshots', $levelController . ':takeSnapshots')->setName('take-snapshots-levels');
 
 // {level_code} can have this regex: [0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}
@@ -88,6 +89,7 @@ $app->group('/levels/{level_code}', function() {
   $this->get('', $levelController . ':detail')->setName('level');
   $this->get('/scrape', $levelController . ':scrape')->setName('scrape-level');
   $this->get('/parse', $levelController . ':parse')->setName('parse-level');
+  $this->get('/track', $levelController . ':track')->setName('track-level');
   $this->get('/take-snapshot', $levelController . ':takeSnapshot')->setName('take-snapshot-level');
   $this->get('/scrapes', $levelController . ':scrapes')->setName('scrapes');
   $this->get('/snapshots', $levelController . ':snapshots')->setName('snapshots');

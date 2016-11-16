@@ -80,6 +80,7 @@ $app->get('/levels/add', $levelController . ':add')->setName('add-level');
 $app->get('/levels/nintendo-not-found', $levelController . ':nintendoNotFound')->setName('level-nintendo-not-found');
 $app->get('/levels/add-error', $levelController . ':addError')->setName('level-add-error');
 $app->get('/levels/take-snapshots', $levelController . ':takeSnapshots')->setName('take-snapshots-levels');
+$app->get('/levels/delta-test', $levelController . ':deltaTest')->setName('delta-test-levels');
 
 // {level_code} can have this regex: [0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}
 // however, we probably should handle that in the controller (not as part of the route regex) so that we can give meaningful errors per page where the user has failed to comply with that regex

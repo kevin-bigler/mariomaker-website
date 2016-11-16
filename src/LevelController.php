@@ -158,16 +158,111 @@ class LevelController {
     return $response->withRedirect( $this->ci->router->pathFor('level', ['level_code' =>$levelCode]) );
   }
 
+  public function deltaTest(Request $request, Response $response, $args) {
+      // $this->ci->logger->addInfo('Delta Test endpoint hit');
+      $levelSnapshotA = array(
+        'difficulty_rank' => 'Expert',
+        'clear_rate' => 6.50,
+        'number_stars' => 0,
+        'number_footprints' => 0,
+        'number_shares' => 0,
+        'number_clears' => 0,
+        'number_attempts' => 0,
+        'number_comments' => 0,
+        'tag' => '---',
+        // 'world_record_player_id' => 'integer',
+        'world_record_player_nintendo_id' => 'beebo',
+        // 'world_record_player_info' => 'string',
+        'world_record_time' => '6:54.00',
+        // 'first_clear_player_id' => 'integer',
+        'first_clear_player_nintendo_id' => 'geokia'
+        // 'first_clear_player_info' => 'string',
+        // 'recent_players_nintendo_ids' => 'string',
+        // 'recent_players_infos' => 'string',
+        // 'cleared_by_players_nintendo_ids' => 'string',
+        // 'cleared_by_players_infos' => 'string',
+        // 'starred_by_players_nintendo_ids' => 'string',
+        // 'starred_by_players_infos' => 'string'
+      );
+      // same values
+      /*$levelSnapshotB = array(
+        'difficulty_rank' => 'Expert',
+        'clear_rate' => 6.50,
+        'number_stars' => 0,
+        'number_footprints' => 0,
+        'number_shares' => 0,
+        'number_clears' => 0,
+        'number_attempts' => 0,
+        'number_comments' => 0,
+        'tag' => '---',
+        // 'world_record_player_id' => 'integer',
+        'world_record_player_nintendo_id' => 'beebo',
+        // 'world_record_player_info' => 'string',
+        'world_record_time' => '6:54.00',
+        // 'first_clear_player_id' => 'integer',
+        'first_clear_player_nintendo_id' => 'geokia'
+        // 'first_clear_player_info' => 'string',
+        // 'recent_players_nintendo_ids' => 'string',
+        // 'recent_players_infos' => 'string',
+        // 'cleared_by_players_nintendo_ids' => 'string',
+        // 'cleared_by_players_infos' => 'string',
+        // 'starred_by_players_nintendo_ids' => 'string',
+        // 'starred_by_players_infos' => 'string'
+      );*/
+      // different values
+      $levelSnapshotB = array(
+        'difficulty_rank' => 'Super Expert',
+        'clear_rate' => 4.43,
+        'number_stars' => 5,
+        'number_footprints' => 3,
+        'number_shares' => 2,
+        'number_clears' => 10,
+        'number_attempts' => 87,
+        'number_comments' => 1,
+        'tag' => 'Puzzle',
+        // 'world_record_player_id' => 'integer',
+        'world_record_player_nintendo_id' => 'beebo333',
+        // 'world_record_player_info' => 'string',
+        'world_record_time' => '3:42.00',
+        // 'first_clear_player_id' => 'integer',
+        'first_clear_player_nintendo_id' => 'geokia'
+        // 'first_clear_player_info' => 'string',
+        // 'recent_players_nintendo_ids' => 'string',
+        // 'recent_players_infos' => 'string',
+        // 'cleared_by_players_nintendo_ids' => 'string',
+        // 'cleared_by_players_infos' => 'string',
+        // 'starred_by_players_nintendo_ids' => 'string',
+        // 'starred_by_players_infos' => 'string'
+      );
+
+      $levelDiffer = new LevelDiffer();
+      $delta = $levelDiffer->findDelta($levelSnapshotA, $levelSnapshotB);
+
+      echo 'delta<pre>';
+      print_r($delta);
+      die();
+  }
+
   public function takeSnapshots(Request $request, Response $response, $args) {
+    $this->ci->logger->addInfo('-----------------------------------');
+    $this->ci->logger->addInfo('Levels: Take Snapshots endpoint hit');
+    $this->ci->logger->addInfo('$_SERVER[REMOTE_ADDR]: ' . $_SERVER['REMOTE_ADDR']);
+
     // find all levels with track = 1, then snapshot each of them
     $trackedLevels = $this->ci->db->select('level', '*', ['track' => 1]);
 
     foreach($trackedLevels as $level) {
+      $this->ci->logger->addInfo('Taking snapshot of level: ' . $level['level_code']);
       $this->levelHelper->takeSnapshot($level['level_code']);
     }
 
-    $response = $this->ci->view->render($response, 'includes/.layout.phtml', ['page' => 'levels/take-snapshots.phtml', 'router' => $this->ci->router, 'tracked_levels' => $trackedLevels, 'response' => $response]);
-    return $response;
+    if ($_SERVER['REMOTE_ADDR'] === '54.212.222.69') {
+      // if it's the server triggering this endpoint, then don't render the view
+      $this->ci->logger->addInfo('Finished taking snapshots of all Levels');
+    } else {
+      $response = $this->ci->view->render($response, 'includes/.layout.phtml', ['page' => 'levels/take-snapshots.phtml', 'router' => $this->ci->router, 'tracked_levels' => $trackedLevels, 'response' => $response]);
+      return $response;
+    }
   }
 
   public function takeSnapshot(Request $request, Response $response, $args) {

@@ -1,0 +1,1 @@
+wget -qO- --user mariomaker --password preview http://mariomaker.kevinbigler.com/levels/take-snapshots &> /dev/null
